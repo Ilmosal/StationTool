@@ -5,6 +5,7 @@ from PyQt5.QtGui import QIcon
 from dataViewer.dataViewWidget import DataViewWidget
 from mapViewer.mapViewerWidget import SidePanelWidget
 from other.databaseAPI import DatabaseApi
+from other.selectionManager import SelectionManager
 """
 This module contains the MainWindow class of the StationTool program.
 The StationTool class will have all the functionality of the program inside of
@@ -51,8 +52,11 @@ class StationToolWidget(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
         self.database_api = DatabaseApi()
-        self.data_view_widget = DataViewWidget(self, self.database_api)
-        self.side_panel_widget = SidePanelWidget(self)
+        self.selection_manager = SelectionManager(self.database_api)
+        self.data_view_widget = DataViewWidget(self, self.database_api, self.selection_manager)
+        self.side_panel_widget = SidePanelWidget(self, self.selection_manager)
+
+        self.side_panel_widget.addStations(self.database_api.getStations())
 
         self.layout = QHBoxLayout(self)
         self.layout.addWidget(self.data_view_widget)
@@ -60,3 +64,20 @@ class StationToolWidget(QWidget):
 
         self.setLayout(self.layout)
 
+    def updateDataViewWidget(self):
+        """
+        Function for updating dataViewWidget
+        """
+        self.data_view_widget.updateAllTabViews()
+
+    def setSelectionText(self, selection_text):
+        """
+        Function for passing selection information from data_view_widget to side panel_widget
+        """
+        self.side_panel_widget.selection_screen.changeSelectedFieldLabel(selection_text)
+
+    def clearSelections(self):
+        """
+        Function for calling data_view_widgets clearSelectionFields function
+        """
+        self.data_view_widget.clearSelectionFields()

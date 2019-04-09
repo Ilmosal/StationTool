@@ -6,6 +6,44 @@ import datetime
 import pyproj
 from PyQt5.QtCore import QDate, QDateTime, QTime
 
+
+def datetime2DateOrNone(value):
+    """
+    Function for converting datetime to date or None
+    """
+    if value is None:
+        return None
+    else:
+        return value.date()
+
+def convertValue(value_string, new_type):
+    """
+    Function for converting as string into a type or returning null if this is not possible
+    """
+    if new_type == int:
+        try:
+            value = int(value_string)
+        except:
+            value = None
+    elif new_type == float:
+        try:
+            value = float(value_string)
+        except:
+            value = None
+    elif new_type == str:
+        value = value_string
+    elif new_type == datetime.datetime:
+        try:
+            value = datetime.datetime.strptime(value_string, "%d/%m/%Y")
+        except:
+            value = None
+    elif new_type == datetime.date:
+        try:
+            value = datetime.datetime.strptime(value_string, "%d/%m/%Y").date()
+        except:
+            value = None
+    return value
+
 def qDate2Date(qdate_val):
     """
     Function for transforming from qdate into date
